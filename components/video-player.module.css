@@ -1,0 +1,8 @@
+/* TODO */
+.progress {
+    -webkit-appearance: none;
+    appearance: none;
+    /* 添加其他的样式属性来自定义按钮的外观 */
+    background: -webkit-linear-gradient(#cc2424, #ddd) no-repeat, #ddd;/*设置左边颜色为#61bd12，右边颜色为#ddd*/
+  }
+  

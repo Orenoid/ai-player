@@ -21,27 +21,52 @@ function VideoLoader({ setUrl }) {
     }
 
     return (
-        <>
+        <div className="flex flex-col items-center justify-center bg-inherit h-full">
             <form onSubmit={handleUrlSubmit}>
-                <input type="text" name="text-input" placeholder="input url here" value={inputUrl} onChange={handleUrlChange}></input>
-                <button type="submit">submit</button>
+                <input
+                    type="text"
+                    name="text-input"
+                    placeholder="input url here"
+                    value={inputUrl}
+                    onChange={handleUrlChange}
+                    className="bg-gray-200 rounded-lg px-4 py-2 mb-4 w-64 text-sm"
+                />
+                <button type="submit" className="bg-green-500 text-white rounded-lg px-4 py-2 text-sm">
+                    submit
+                </button>
             </form>
-            <p>or</p>
+            <p className="text-white text-base">or</p>
             <div>
-                <span>open by file</span>
-                <input type="file" accept="video/*" onChange={handleFileInputChange} />
+                <input
+                    type="file"
+                    accept="video/*"
+                    onChange={handleFileInputChange}
+                    className="bg-gray-200 rounded-lg px-4 py-2 text-sm"
+                />
             </div>
-        </>
+        </div>
     )
+
 }
 
-function Player() {
+function Player({ className }) {
     const [url, setUrl] = useState("")
+    const [progress, setProgress] = useState(0)
+
+    const setCoreProgress = (seconds) => {
+        setProgress(seconds)
+    }
+    const getCoreProgress = () => seconds
 
     return (
-        url === "" ?
-            <VideoLoader setUrl={setUrl}></VideoLoader> :
-            <VideoPlayer seconds={0} url={url}></VideoPlayer>
+        <div class={className}>
+            {
+                url === "" ?
+                    <VideoLoader setUrl={setUrl}></VideoLoader> :
+                    <VideoPlayer progress={progress} setProgress={setCoreProgress} url={url}></VideoPlayer>
+            }
+
+        </div>
     )
 
 }

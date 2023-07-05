@@ -1,88 +1,116 @@
 import { useState } from "react";
+import { FaPause, FaPlay } from "react-icons/fa";
 import ReactPlayer from "react-player";
 
-// function SeekTo(seconds, player) {
-//     player.
-// }
+const VideoControls = ({
+  progress, setProgress,
+  duration,
+  playing, setPlaying,
+  seekTo,
+}) => {
 
-export default function VideoPlayer({
-    url,
-    seconds,
-}) {
-    const [playing, setPlaying] = useState(false)
+  const [seekingProgress, setSeekingProgress] = useState(-1)
 
-    return (
-        <ReactPlayer
-            url={url}
-            playing={playing}
-        ></ReactPlayer>
-    )
-
-}
-
-/*
-import { useState } from "react";
-import ReactPlayer from "react-player";
-
-export default function Player() {
-  const handleProgress = (obj) => {
-    console.log(obj)
-  }
-  const handlePlay = () => {
-    console.log('played')
-  }
-  const [url, setUrl] = useState('https://www.youtube.com/watch?v=ysz5S6PUM-U')
-
-  const handleVideoInputChange = (event) => {
-    const file = event.target.files[0];
-    const url = URL.createObjectURL(file);
-    setUrl(url)
-  }
-
-  const [playing, setPlaying] = useState(false)
-  const handleButtonClick = (event) => {
+  const handleClick = (e) => {
+    e.preventDefault()
     setPlaying(!playing)
   }
 
-  const [progress, SetProgress] = useState(0)
-  const handleInputProgressChange = (e) => {
-    const value = e.target.value;
-    // 使用正则表达式验证输入的是否为数字
-    if (/^\d*$/.test(value)) {
-      SetProgress(parseInt(value));
-    }
-  }
-
-  let player
-  const ref = p => { player = p }
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    player.seekTo(progress, 'seconds')
-  }
-
   return (
-    <div>
-      <input type="file" id="videoFile" accept="video/*" onChange={handleVideoInputChange} />
-      <ReactPlayer
-        ref={ref}
-        url={url}
-        onPlay={handlePlay}
-        onProgress={handleProgress}
-        playing={playing}
-      >
-      </ReactPlayer>
-      <div>
-      <button onClick={handleButtonClick}>{playing ? 'pause' : 'play'}</button>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={progress}
-          onChange={handleInputProgressChange}
-        />
-        <button type="submit">提交</button>
-      </form>
+    <div class="flex flex-col absolute w-full bottom-0 bg-opacity-50 min-h-min pb-0.5 bg-black">
+
+      {/* 进度条 */}
+      <input
+        // className={styles.progress}
+        type='range'
+        min={0} max={0.999999} step='any'
+        value={(seekingProgress !== -1 ? seekingProgress : progress) / duration}
+        onChange={e => {
+          setSeekingProgress(duration * e.target.value)
+        }}
+        onMouseUp={e => {
+          setSeekingProgress(-1)
+          seekTo(duration * e.target.value)
+        }}
+      ></input>
+
+      {/* 其他控制按钮 */}
+      <div class="flex flex-row items-center pl-2">
+        {/* 播放/暂停按钮 */}
+        <div class="mr-3">
+          {
+            playing ? <FaPause color="#f6f6f6" onClick={handleClick}></FaPause> : <FaPlay color="#DDDDDD" onClick={handleClick}></FaPlay>
+          }
+        </div>
+        {/* 播放时间 */}
+        <span class="text-[#f6f6f6]">{formatTime(progress)} / {formatTime(duration)}</span>
       </div>
     </div>
   )
 }
-*/
+
+function formatTime(seconds) {
+  seconds = Math.floor(seconds);
+  var hours = Math.floor(seconds / 3600);
+  var minutes = Math.floor((seconds % 3600) / 60);
+  var remainingSeconds = seconds % 60;
+
+  var timeString = '';
+
+  if (hours > 0) {
+    timeString += hours.toString().padStart(2, '0') + ':';
+  }
+
+  timeString += minutes.toString().padStart(2, '0') + ':' + remainingSeconds.toString().padStart(2, '0');
+
+  return timeString;
+}
+
+
+
+export default function VideoPlayer({
+  url,
+  progress,
+  setProgress,
+}) {
+  const [playing, setPlaying] = useState(false)
+  const [duration, setDuration] = useState(0)
+
+  const handleProgress = (props) => {
+    setProgress(props.playedSeconds)
+  }
+  const handleSeek = (seconds) => { setProgress(seconds) }
+
+  const handleDuration = (seconds) => {
+    setDuration(seconds)
+  }
+
+  let player
+  const reactPlayerRef = p => { player = p }
+  const seekTo = (progress) => {player.seekTo(progress)}
+
+  return (
+    <div class="w-full h-full relative">
+      <ReactPlayer
+        url={url}
+        width="100%"
+        height="100%"
+        ref={reactPlayerRef}
+        playing={playing}
+        onPlay={() => { setPlaying(true) }}
+        onPause={() => { setPlaying(false) }}
+        onProgress={handleProgress}
+        onSeek={handleSeek}
+        onDuration={handleDuration}
+        progressInterval={50}
+      ></ReactPlayer>
+      <VideoControls
+        progress={progress} setProgress={setProgress}
+        duration={duration} 
+        playing={playing} setPlaying={setPlaying}
+        seekTo={seekTo}
+      ></VideoControls>
+    </div>
+  )
+
+}
