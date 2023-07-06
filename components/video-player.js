@@ -1,20 +1,23 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { FaPause, FaPlay } from "react-icons/fa";
 import ReactPlayer from "react-player";
 
 const VideoControls = ({
-  progress, setProgress,
+  progress,
   duration,
   playing, setPlaying,
   seekTo,
 }) => {
 
   const [seekingProgress, setSeekingProgress] = useState(-1)
+  const seeking = useRef(false)
 
   const handleClick = (e) => {
     e.preventDefault()
     setPlaying(!playing)
   }
+
+  console.log('controls rendered', seekingProgress, progress)
 
   return (
     <div class="flex flex-col absolute w-full bottom-0 bg-opacity-50 min-h-min pb-0.5 bg-black">
@@ -25,12 +28,17 @@ const VideoControls = ({
         type='range'
         min={0} max={0.999999} step='any'
         value={(seekingProgress !== -1 ? seekingProgress : progress) / duration}
+        onMouseDown={e => { seeking.current = true }}
         onChange={e => {
+          if (!seeking.current) {
+            return
+          }
           setSeekingProgress(duration * e.target.value)
         }}
         onMouseUp={e => {
           setSeekingProgress(-1)
           seekTo(duration * e.target.value)
+          seeking.current = false
         }}
       ></input>
 
@@ -87,7 +95,7 @@ export default function VideoPlayer({
 
   let player
   const reactPlayerRef = p => { player = p }
-  const seekTo = (progress) => {player.seekTo(progress)}
+  const seekTo = (progress) => { player.seekTo(progress, 'seconds') }
 
   return (
     <div class="w-full h-full relative">
@@ -106,7 +114,7 @@ export default function VideoPlayer({
       ></ReactPlayer>
       <VideoControls
         progress={progress} setProgress={setProgress}
-        duration={duration} 
+        duration={duration}
         playing={playing} setPlaying={setPlaying}
         seekTo={seekTo}
       ></VideoControls>
