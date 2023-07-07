@@ -1,3 +1,14 @@
+## AI Player
+
+一个集成了 AI 功能的视频播放器
+
+## TODO
+- [x] 升级TypeScript
+- [ ] 隐藏 VideoControls 组件
+- [ ] 字幕组件
+- [ ] 进度条跳转 BUG
+- [ ] Chat 组件
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
@@ -36,10 +47,3 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
-
-## TODO
-- 进度条跳转 BUG
-- 升级 TypeScript
-- 隐藏 VideoControls 组件
-- 字幕组件
-- Chat 组件
