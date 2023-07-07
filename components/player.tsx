@@ -1,21 +1,28 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import VideoPlayer from "./video-player";
 
-function VideoLoader({ setUrl }) {
+type VideoLoaderProps = {
+    setUrl: React.Dispatch<React.SetStateAction<string>>;
+}
+
+function VideoLoader({ setUrl }: VideoLoaderProps) {
 
     const [inputUrl, setInputUrl] = useState("")
 
-    const handleFileInputChange = (event) => {
-        const file = event.target.files[0];
-        const url = URL.createObjectURL(file);
+    const handleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files;
+        if (files === null) {
+            return
+        }
+        const url = URL.createObjectURL(files[0]);
         setUrl(url)
     }
 
-    const handleUrlChange = (event) => {
+    const handleUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setInputUrl(event.target.value)
     }
 
-    const handleUrlSubmit = (event) => {
+    const handleUrlSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setUrl(inputUrl)
     }
@@ -49,17 +56,21 @@ function VideoLoader({ setUrl }) {
 
 }
 
-function Player({ className }) {
+type PlayerProps = {
+    className: string
+}
+
+function Player({className}: PlayerProps) {
     const [url, setUrl] = useState("")
     const [progress, setProgress] = useState(0)
 
-    const setCoreProgress = (seconds) => {
+    const setCoreProgress = (seconds: number) => {
         setProgress(seconds)
     }
-    const getCoreProgress = () => seconds
+    const getCoreProgress = () => progress
 
     return (
-        <div class={className}>
+        <div className={className}>
             {
                 url === "" ?
                     <VideoLoader setUrl={setUrl}></VideoLoader> :
