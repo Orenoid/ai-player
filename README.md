@@ -4,7 +4,7 @@
 
 ## TODO
 - [x] 升级TypeScript
-- [ ] 隐藏 VideoControls 组件
+- [x] 隐藏 VideoControls 组件
 - [ ] 字幕组件
 - [ ] 进度条跳转 BUG
 - [ ] Chat 组件
