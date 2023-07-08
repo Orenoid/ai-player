@@ -26,8 +26,6 @@ const VideoControls = ({
     setPlaying(!playing)
   }
 
-  console.log('controls rendered', seekingProgress, progress)
-
   return (
     <div className="flex flex-col absolute w-full bottom-0 bg-opacity-50 min-h-min pb-0.5 bg-black"
       onClick={(e) => { e.stopPropagation() }}
