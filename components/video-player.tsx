@@ -22,14 +22,16 @@ const VideoControls = ({
   const seeking = useRef(false)
 
   const handleClick: MouseEventHandler<SVGElement> = (e) => {
-    e.preventDefault()
+    e.stopPropagation()
     setPlaying(!playing)
   }
 
   console.log('controls rendered', seekingProgress, progress)
 
   return (
-    <div className="flex flex-col absolute w-full bottom-0 bg-opacity-50 min-h-min pb-0.5 bg-black">
+    <div className="flex flex-col absolute w-full bottom-0 bg-opacity-50 min-h-min pb-0.5 bg-black"
+      onClick={(e) => { e.stopPropagation() }}
+    >
 
       {/* 进度条 */}
       <input
@@ -46,7 +48,7 @@ const VideoControls = ({
         }}
         onMouseUp={e => {
           setSeekingProgress(-1)
-          seekTo(duration * e.currentTarget.valueAsNumber) // fixme ?
+          seekTo(duration * e.currentTarget.valueAsNumber)
           seeking.current = false
         }}
       ></input>
@@ -94,8 +96,10 @@ export default function VideoPlayer({
   progress,
   setProgress,
 }: VideoPlayerProps) {
+
   const [playing, setPlaying] = useState(false)
   const [duration, setDuration] = useState(0)
+  const [showControls, setShowControls] = useState(false)
 
   const handleProgress = (props: OnProgressProps) => {
     setProgress(props.playedSeconds)
@@ -111,7 +115,13 @@ export default function VideoPlayer({
   const seekTo = (progress: number) => { player.seekTo(progress, 'seconds') }
 
   return (
-    <div className="w-full h-full relative">
+    <div className="w-full h-full relative"
+      onMouseEnter={(e) => { setShowControls(true) }}
+      onMouseLeave={(e) => { setShowControls(false) }}
+      onClick={(e) => { setPlaying(!playing) }}
+      tabIndex={0}
+      onKeyDown={e => { if (e.key === ' ') {setPlaying(!playing)}}}
+    >
       <ReactPlayer
         url={url}
         width="100%"
@@ -125,12 +135,12 @@ export default function VideoPlayer({
         onDuration={handleDuration}
         progressInterval={50}
       ></ReactPlayer>
-      <VideoControls
+      {showControls && <VideoControls
         progress={progress}
         duration={duration}
         playing={playing} setPlaying={setPlaying}
         seekTo={seekTo}
-      ></VideoControls>
+      ></VideoControls>}
     </div>
   )
 
